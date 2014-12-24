@@ -4,7 +4,7 @@ import (
     "net/http"
     "fmt"
     "github.com/gorilla/mux"
-    "./conf/"
+    "github.com/njdup/wakeup-call-backend/conf"
 )
 
 func HomeHandler(res http.ResponseWriter, req *http.Request) {
