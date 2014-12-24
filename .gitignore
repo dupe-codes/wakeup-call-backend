@@ -1,0 +1,14 @@
+# Editor artifacts
+*.swp
+
+# Compiled go files
+*.o
+*.a
+*.so
+
+*.exe
+*.test
+*.prof
+
+# Ignore compiled project file
+wakeup-call-backend
