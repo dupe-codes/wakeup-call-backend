@@ -49,7 +49,7 @@ func (user *User) Save() error {
             return err
         }
         if count != 0 {
-            return InvalidFieldError{"The given username already exists", "Username"}
+            return &InvalidFieldError{"A user with the given username already exists", "Username"}
         }
         return col.Insert(user)
     }
