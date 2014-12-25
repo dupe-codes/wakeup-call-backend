@@ -21,6 +21,13 @@ type User struct {
 	Inserted     time.Time     `bson:"inserted" json:"-"`
 }
 
+type InvalidFieldError struct {
+    msg string
+    Field string
+}
+
+func (err *InvalidFieldError) Error() string { return err.msg }
+
 var (
 	collectionName = "users"
 )
@@ -42,18 +49,14 @@ func (user *User) Save() error {
             return err
         }
         if count != 0 {
-            return errors.New("A user with the given username already exists")
+            return InvalidFieldError{"The given username already exists", "Username"}
         }
         return col.Insert(user)
     }
 
     // TODO: Add insert time stamp here
 
-    err := db.ExecWithCol(collectionName, insertQuery)
-    if err != nil {
-        return errors.New("Error encountered inserting user information into the db")
-    }
-    return nil
+    return db.ExecWithCol(collectionName, insertQuery)
 }
 
 

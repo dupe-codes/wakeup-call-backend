@@ -12,8 +12,15 @@ import (
 )
 
 func HomeHandler(res http.ResponseWriter, req *http.Request) {
-	user.TestInsert()
-	fmt.Fprintf(res, "This is a test!")
+	user := &user.User{
+        Username: "Guy",
+        Fullname: "Mr Dude",
+	}
+	err := user.Save()
+	if err != nil {
+	    panic(err)
+	}
+	fmt.Fprintf(res, "This is a test! And the user was correctly saved hooray!")
 }
 
 // ConfigureRoutes sets all API routes
