@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"time"
+	"strings"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -31,7 +32,8 @@ var (
 func (user *User) Save() error {
     emptyFields := checkEmptyFields(user)
     if len(emptyFields) != 0 {
-        return errors.New("The following fields cannot be empty:" + emptyFields)
+        invalid := strings.Join(emptyFields, " ")
+        return errors.New("The following fields cannot be empty: " + invalid)
     }
 
     insertQuery := func(col *mgo.Collection) error {
@@ -61,10 +63,10 @@ func (user *User) Save() error {
 
 // checkEmptyFields ensures all required fields of a user obj are set
 func checkEmptyFields(user *User) []string {
-    result := make([]string)
+    result := make([]string, 0)
 
     // TODO: Find a better way of doing this kind of checking
-    if user.Username == nil {
+    if user.Username == "" {
         result = append(result, "username")
     }
     return result
