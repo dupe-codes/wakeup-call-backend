@@ -1,31 +1,31 @@
 package main
 
 import (
-    "net/http"
-    "fmt"
+	"fmt"
+	"net/http"
 
-    "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 
-    "github.com/njdup/wakeup-call-backend/conf"
+	"github.com/njdup/wakeup-call-backend/conf"
 
-    "./models/users"
+	"./models/users"
 )
 
 func HomeHandler(res http.ResponseWriter, req *http.Request) {
-    user.TestInsert()
-    fmt.Fprintf(res, "This is a test!")
+	user.TestInsert()
+	fmt.Fprintf(res, "This is a test!")
 }
 
 // ConfigureRoutes sets all API routes
 func configureRoutes(router *mux.Router) {
-    router.HandleFunc("/test/", test.TestHandler)
+	router.HandleFunc("/test/", HomeHandler)
 }
 
 // Main launches the API server
 func main() {
-    router := mux.NewRouter()
-    configureRoutes(router)
+	router := mux.NewRouter()
+	configureRoutes(router)
 
-    http.Handle("/", router)
-    http.ListenAndServe(config.Settings.Port, nil)
+	http.Handle("/", router)
+	http.ListenAndServe(config.Settings.Port, nil)
 }
