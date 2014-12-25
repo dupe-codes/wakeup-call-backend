@@ -21,12 +21,12 @@ type User struct {
 	Inserted     time.Time     `bson:"inserted" json:"-"`
 }
 
-type InvalidFieldError struct {
+type InvalidFieldsError struct {
     msg string
-    Field string
+    Fields []string
 }
 
-func (err *InvalidFieldError) Error() string { return err.msg }
+func (err *InvalidFieldsError) Error() string { return err.msg }
 
 var (
 	collectionName = "users"
@@ -49,7 +49,7 @@ func (user *User) Save() error {
             return err
         }
         if count != 0 {
-            return &InvalidFieldError{"A user with the given username already exists", "Username"}
+            return &InvalidFieldsError{"A user with the given username already exists", []string{"Username"}}
         }
         return col.Insert(user)
     }

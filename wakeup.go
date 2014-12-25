@@ -13,7 +13,6 @@ import (
 
 func HomeHandler(res http.ResponseWriter, req *http.Request) {
 	user := &user.User{
-        Username: "Guy",
         Fullname: "Mr Dude",
 	}
 	err := user.Save()
