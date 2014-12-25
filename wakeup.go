@@ -3,12 +3,16 @@ package main
 import (
     "net/http"
     "fmt"
+
     "github.com/gorilla/mux"
+
     "github.com/njdup/wakeup-call-backend/conf"
-    "./controllers/test"
+
+    "./models/users"
 )
 
 func HomeHandler(res http.ResponseWriter, req *http.Request) {
+    user.TestInsert()
     fmt.Fprintf(res, "This is a test!")
 }
 
