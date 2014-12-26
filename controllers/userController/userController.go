@@ -1,14 +1,14 @@
 package userController
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
 	"net/http"
 
-	"gopkg.in/mgo.v2/bson"
+	//"gopkg.in/mgo.v2/bson"
 
-	"github.com/njdup/wakeup-call-backend/conf"
-	"github.com/njdup/wakeup-call-backend/models/users"
+	//"github.com/njdup/wakeup-call-backend/conf"
+	//"github.com/njdup/wakeup-call-backend/models/users"
 )
 
 func AllUsers(res http.ResponseWriter, req *http.Request) {
