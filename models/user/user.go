@@ -74,6 +74,8 @@ func checkEmptyFields(user *User) []string {
 	result := make([]string, 0)
 
 	// TODO: Find a better way of doing this kind of checking
+	// For some reason, request of form Username: "" was successful. Look into 
+	// this.
 	if user.Username == "" {
 		result = append(result, "username")
 	}

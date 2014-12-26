@@ -8,7 +8,7 @@ import (
 	//"gopkg.in/mgo.v2/bson"
 
 	//"github.com/njdup/wakeup-call-backend/conf"
-	"github.com/njdup/wakeup-call-backend/models/users"
+	"github.com/njdup/wakeup-call-backend/models/user"
 )
 
 type UserAPIResponse struct {
@@ -32,6 +32,8 @@ func CreateUser(res http.ResponseWriter, req *http.Request) {
 		Username: req.PostFormValue("Username"),
 		Fullname: req.PostFormValue("Fullname"),
 	}
+	// TODO: Take given password here and generate hash + salt.
+	// Make helpers to do this
 
 	// Now attempt to save, create appropriate response
 	resContent := &UserAPIResponse{}
@@ -46,16 +48,21 @@ func CreateUser(res http.ResponseWriter, req *http.Request) {
 
 	payload, err := json.MarshalIndent(resContent, "", "  ")
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(res, `{"Status": 400, "Error": "Unknown"}`)
+		return
 	}
 	fmt.Fprintf(res, string(payload))
 	return
 }
 
 func Login(res http.ResponseWriter, req *http.Request) {
+	// Do authentication stuff to create new session here
+	// TODO: Use helper function to check if hashed given pass +
+	// salt == stored hash + salt
 	return
 }
 
 func Logout(res http.ResponseWriter, req *http.Request) {
+	// Do unauth stuff to destroy session here
 	return
 }

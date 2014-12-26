@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/njdup/wakeup-call-backend/conf"
-	"github.com/njdup/wakeup-call-backend/models/users"
+	"github.com/njdup/wakeup-call-backend/models/user"
 
 	"./controllers/userController"
 )
