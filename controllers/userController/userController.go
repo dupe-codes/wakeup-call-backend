@@ -8,7 +8,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/njdup/wakeup-call-backend/conf"
-	"github.com/njdup/wakeup-call-backend/models/user"
+	"github.com/njdup/wakeup-call-backend/models/users"
 )
 
 func AllUsers(res http.ResponseWriter, req *http.Request) {
