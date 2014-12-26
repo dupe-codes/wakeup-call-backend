@@ -7,17 +7,18 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/njdup/wakeup-call-backend/conf"
+	"github.com/njdup/wakeup-call-backend/models/users"
 
-	"./models/users"
+	"./controllers/userController"
 )
 
 func HomeHandler(res http.ResponseWriter, req *http.Request) {
 	user := &user.User{
-        Fullname: "Mr Dude",
+		Fullname: "Mr Dude",
 	}
 	err := user.Save()
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
 	fmt.Fprintf(res, "This is a test! And the user was correctly saved hooray!")
 }
@@ -25,6 +26,8 @@ func HomeHandler(res http.ResponseWriter, req *http.Request) {
 // ConfigureRoutes sets all API routes
 func configureRoutes(router *mux.Router) {
 	router.HandleFunc("/test/", HomeHandler)
+
+	router.HandleFunc("/users", userController.CreateUser).Methods("POST")
 }
 
 // Main launches the API server
