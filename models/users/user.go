@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 	"time"
+	"fmt"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -32,6 +33,11 @@ func (err *InvalidFieldsError) Error() string { return err.msg }
 var (
 	collectionName = "users"
 )
+
+// ToString returns a string representation of the receiving user
+func (user *User) ToString() string {
+    return fmt.Sprintf("User %s: %s", user.Username, user.Fullname)
+}
 
 // Save inserts the receiver User into the database.
 // Returns an error if one is encountered, including
