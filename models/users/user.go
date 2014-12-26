@@ -2,9 +2,9 @@ package user
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
-	"fmt"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -24,11 +24,11 @@ type User struct {
 
 // TODO: Move creation of error types into utils/ErrorUtils file
 type InvalidFieldsError struct {
-	msg    string
-	Fields []string
+	Message string
+	Fields  []string
 }
 
-func (err *InvalidFieldsError) Error() string { return err.msg }
+func (err *InvalidFieldsError) Error() string { return err.Message }
 
 var (
 	collectionName = "users"
@@ -36,7 +36,7 @@ var (
 
 // ToString returns a string representation of the receiving user
 func (user *User) ToString() string {
-    return fmt.Sprintf("User %s: %s", user.Username, user.Fullname)
+	return fmt.Sprintf("User %s: %s", user.Username, user.Fullname)
 }
 
 // Save inserts the receiver User into the database.

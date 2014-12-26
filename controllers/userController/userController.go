@@ -12,9 +12,9 @@ import (
 )
 
 type UserAPIResponse struct {
-    status int
-    data interface{}
-    err error
+	Status int
+	Data   interface{}
+	Error  error
 }
 
 func AllUsers(res http.ResponseWriter, req *http.Request) {
@@ -26,28 +26,28 @@ func GetUser(res http.ResponseWriter, req *http.Request) {
 }
 
 func CreateUser(res http.ResponseWriter, req *http.Request) {
-	//fmt.Fprintf(res, "This is where we'll create a new user, yay!")
-    // Prepare new user from form data
+	// Prepare new user from form data
 	req.ParseForm()
 	newUser := &user.User{
-	    Username: req.PostFormValue("Username"),
-	    Fullname: req.PostFormValue("Fullname"),
+		Username: req.PostFormValue("Username"),
+		Fullname: req.PostFormValue("Fullname"),
 	}
 
-    // Now attempt to save, create appropriate response
-    resContent := &UserAPIResponse{}
+	// Now attempt to save, create appropriate response
+	resContent := &UserAPIResponse{}
 	err := newUser.Save()
 	if err != nil {
-        resContent.status = 400
-        resContent.err = err
+		resContent.Status = 400
+		resContent.Error = err
 	} else {
-        resContent.status = 200
-        resContent.data = []byte{'h', 'i'}
+		resContent.Status = 200
+		resContent.Data = "success"
 	}
-    payload, err := json.MarshalIndent(resContent, "", " ")
-    if err != nil {
-        panic(err)
-    }
+
+	payload, err := json.MarshalIndent(resContent, "", "  ")
+	if err != nil {
+		panic(err)
+	}
 	fmt.Fprintf(res, string(payload))
 	return
 }
