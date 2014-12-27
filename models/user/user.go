@@ -12,6 +12,7 @@ import (
 	"github.com/njdup/wakeup-call-backend/conf"
 	"github.com/njdup/wakeup-call-backend/db"
 	"github.com/njdup/wakeup-call-backend/utils/errors"
+	"github.com/njdup/wakeup-call-backend/utils/security"
 )
 
 type User struct {
@@ -62,6 +63,21 @@ func (user *User) Save() error {
 	}
 
 	return db.ExecWithCol(collectionName, insertQuery)
+}
+
+// HashPassword hashes the given password and saves it in the user struct
+func (user *User) HashPassword(password string) error {
+    passwordSalt := security.GenerateSalt()
+    hashedPass := security.RunSHA2(password + passwordSalt)
+
+    user.PasswordHash = hashedPass
+    user.PasswordSalt = passwordSalt
+    return nil
+}
+
+// ConfirmPassword checks if the given password matches the saved password
+func (user *User) ConfirmPassword(givenPass string) bool {
+    return security.RunSHA2(givenPass + user.PasswordSalt) == user.PasswordHash
 }
 
 /*
