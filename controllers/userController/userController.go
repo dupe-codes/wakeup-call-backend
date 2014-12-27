@@ -30,6 +30,7 @@ func CreateUser(res http.ResponseWriter, req *http.Request) {
 	// TODO: Take given password here and generate hash + salt.
 	// Make helpers to do this
 	newUser.HashPassword(req.PostFormValue("Password"))
+	fmt.Printf(newUser.ToString())
 
 	// Now attempt to save, create appropriate response
 	resContent := &APIResponses.Response{}
