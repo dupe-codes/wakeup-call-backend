@@ -24,8 +24,20 @@ type User struct {
 	Inserted     time.Time     `bson:"inserted" json:"-"`
 }
 
+//type PasswordValidator (*PasswordPolicy) func(string) bool
+
+type PasswordPolicy struct { // TODO: Refactor and expand this
+    MinimumLength int
+    Validations []PasswordValidator
+}
+
+type PasswordValidator func(*PasswordPolicy, string) bool
+
+func MeetsMinLength(policy *PasswordPolicy, password string) bool { return len(password) >= policy.MinimumLength }
+
 var (
 	collectionName = "users"
+	passwordPolicy = &PasswordPolicy{6, []PasswordValidator{MeetsMinLength}}
 )
 
 // ToString returns a string representation of the receiving user
@@ -67,6 +79,12 @@ func (user *User) Save() error {
 
 // HashPassword hashes the given password and saves it in the user struct
 func (user *User) HashPassword(password string) error {
+    if !passwordValid(password) {
+        return &errorUtils.InvalidFieldsError{
+            "The given password is not acceptable",
+            []string{"Password"},
+        }
+    }
     passwordSalt := security.GenerateSalt()
     hashedPass := security.RunSHA2(password + passwordSalt)
 
@@ -110,6 +128,17 @@ func checkEmptyFields(user *User) []string {
 		result = append(result, "username")
 	}
 	return result
+}
+
+// passwordValid checks if the password conforms to the password policy
+// TODO: Have this return a PasswordValidationError rather than a bool
+func passwordValid(password string) bool {
+    for _, validator := range passwordPolicy.Validations {
+        if !validator(passwordPolicy, password) {
+            return false
+        }
+    }
+    return true
 }
 
 /*

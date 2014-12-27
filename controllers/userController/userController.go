@@ -27,10 +27,12 @@ func CreateUser(res http.ResponseWriter, req *http.Request) {
 		Username: req.PostFormValue("Username"),
 		Fullname: req.PostFormValue("Fullname"),
 	}
-	// TODO: Take given password here and generate hash + salt.
-	// Make helpers to do this
-	newUser.HashPassword(req.PostFormValue("Password"))
-	fmt.Printf(newUser.ToString())
+	
+	err := newUser.HashPassword(req.PostFormValue("Password"))
+	if err != nil {
+	    fmt.Fprintf(res, "Password is invalid")
+	    return
+	}
 
 	// Now attempt to save, create appropriate response
 	resContent := &APIResponses.Response{}
