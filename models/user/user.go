@@ -24,20 +24,8 @@ type User struct {
 	Inserted     time.Time     `bson:"inserted" json:"-"`
 }
 
-//type PasswordValidator (*PasswordPolicy) func(string) bool
-
-type PasswordPolicy struct { // TODO: Refactor and expand this
-    MinimumLength int
-    Validations []PasswordValidator
-}
-
-type PasswordValidator func(*PasswordPolicy, string) bool
-
-func MeetsMinLength(policy *PasswordPolicy, password string) bool { return len(password) >= policy.MinimumLength }
-
 var (
 	collectionName = "users"
-	passwordPolicy = &PasswordPolicy{6, []PasswordValidator{MeetsMinLength}}
 )
 
 // ToString returns a string representation of the receiving user
@@ -132,10 +120,10 @@ func checkEmptyFields(user *User) []string {
 
 // passwordValid checks if the password conforms to the password policy
 // TODO: Have this return a PasswordValidationError rather than a bool
+// Maybe have validators return the error with appropriate message
 func passwordValid(password string) bool {
-	fmt.Printf("The length of the given password is: %d \n", len(password))
-    for _, validator := range passwordPolicy.Validations {
-        if !validator(passwordPolicy, password) {
+    for _, validator := range security.PasswordPolicy.Validations {
+        if !validator(password) {
             return false
         }
     }

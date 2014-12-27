@@ -30,7 +30,7 @@ func CreateUser(res http.ResponseWriter, req *http.Request) {
 	
 	err := newUser.HashPassword(req.PostFormValue("Password"))
 	if err != nil {
-	    fmt.Fprintf(res, "Password is invalid")
+	    fmt.Fprintf(res, "Password is invalid") //TODO: Handle with appropriate http resp
 	    return
 	}
 
