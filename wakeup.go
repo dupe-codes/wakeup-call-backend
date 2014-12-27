@@ -28,6 +28,7 @@ func configureRoutes(router *mux.Router) {
 	router.HandleFunc("/test/", HomeHandler)
 
 	router.HandleFunc("/users", userController.CreateUser).Methods("POST")
+	router.HandleFunc("/users/login", userController.Login).Methods("POST")
 }
 
 // Main launches the API server

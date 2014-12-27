@@ -82,6 +82,7 @@ func (user *User) ConfirmPassword(givenPass string) bool {
 
 // FindMatchingUser searches for a saved user with the given username
 // Returns a pointer to the matching User struct
+// TODO: Figure out how to detect when no matching user found
 func FindMatchingUser(username string) (*User, error) {
     result := User{}
     searchQuery := func(col *mgo.Collection) error {

@@ -59,10 +59,15 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
     matchedUser, err := user.FindMatchingUser(req.PostFormValue("Username"))
     if err != nil {
-        fmt.Fprintf(res, "Error encountered")
+        fmt.Fprintf(res, err.Error())
         return
     }
-    fmt.Fprintf(res, matchedUser.ToString())
+
+    if matchedUser.ConfirmPassword(req.PostFormValue("Password")) {
+        fmt.Fprintf(res, "Password matched!")
+    } else {
+        fmt.Fprintf(res, "Passowrd didn't match!")
+    }
 	return
 }
 
