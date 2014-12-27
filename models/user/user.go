@@ -80,6 +80,20 @@ func (user *User) ConfirmPassword(givenPass string) bool {
     return security.RunSHA2(givenPass + user.PasswordSalt) == user.PasswordHash
 }
 
+// FindMatchingUser searches for a saved user with the given username
+// Returns a pointer to the matching User struct
+func FindMatchingUser(username string) (*User, error) {
+    result := User{}
+    searchQuery := func(col *mgo.Collection) error {
+        return col.Find(bson.M{"userName": username}).One(&result)
+    }
+    err := db.ExecWithCol(collectionName, searchQuery)
+    if err != nil {
+        return nil, err
+    }
+    return &result, nil
+}
+
 /*
  * User model utility functions
  */

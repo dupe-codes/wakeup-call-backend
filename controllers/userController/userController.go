@@ -56,6 +56,9 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	// Do authentication stuff to create new session here
 	// TODO: Use helper function to check if hashed given pass +
 	// salt == stored hash + salt
+	req.ParseForm()
+    matchedUser, err := user.FindMatchingUser(req.PostFormValue("Username"))
+    fmt.Fprintf(res, matchedUser.ToString())
 	return
 }
 
