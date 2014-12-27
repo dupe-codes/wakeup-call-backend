@@ -133,6 +133,7 @@ func checkEmptyFields(user *User) []string {
 // passwordValid checks if the password conforms to the password policy
 // TODO: Have this return a PasswordValidationError rather than a bool
 func passwordValid(password string) bool {
+	fmt.Printf("The length of the given password is: %d \n", len(password))
     for _, validator := range passwordPolicy.Validations {
         if !validator(passwordPolicy, password) {
             return false
