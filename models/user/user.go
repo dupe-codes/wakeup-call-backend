@@ -54,8 +54,8 @@ func (user *User) Save() error {
 		}
 		if count != 0 {
 			return &errorUtils.InvalidFieldsError{
-			    "A user with the given username already exists",
-			    []string{"Username"},
+				"A user with the given username already exists",
+				[]string{"Username"},
 			}
 		}
 		user.Inserted = time.Now() // Add insertion time stamp
@@ -67,38 +67,38 @@ func (user *User) Save() error {
 
 // HashPassword hashes the given password and saves it in the user struct
 func (user *User) HashPassword(password string) error {
-    if !passwordValid(password) {
-        return &errorUtils.InvalidFieldsError{
-            "The given password is not acceptable",
-            []string{"Password"},
-        }
-    }
-    passwordSalt := security.GenerateSalt()
-    hashedPass := security.RunSHA2(password + passwordSalt)
+	if !passwordValid(password) {
+		return &errorUtils.InvalidFieldsError{
+			"The given password is not acceptable",
+			[]string{"Password"},
+		}
+	}
+	passwordSalt := security.GenerateSalt()
+	hashedPass := security.RunSHA2(password + passwordSalt)
 
-    user.PasswordHash = hashedPass
-    user.PasswordSalt = passwordSalt
-    return nil
+	user.PasswordHash = hashedPass
+	user.PasswordSalt = passwordSalt
+	return nil
 }
 
 // ConfirmPassword checks if the given password matches the saved password
 func (user *User) ConfirmPassword(givenPass string) bool {
-    return security.RunSHA2(givenPass + user.PasswordSalt) == user.PasswordHash
+	return security.RunSHA2(givenPass+user.PasswordSalt) == user.PasswordHash
 }
 
 // FindMatchingUser searches for a saved user with the given username
 // Returns a pointer to the matching User struct
 // TODO: Figure out how to detect when no matching user found
 func FindMatchingUser(username string) (*User, error) {
-    result := User{}
-    searchQuery := func(col *mgo.Collection) error {
-        return col.Find(bson.M{"userName": username}).One(&result)
-    }
-    err := db.ExecWithCol(collectionName, searchQuery)
-    if err != nil {
-        return nil, err
-    }
-    return &result, nil
+	result := User{}
+	searchQuery := func(col *mgo.Collection) error {
+		return col.Find(bson.M{"userName": username}).One(&result)
+	}
+	err := db.ExecWithCol(collectionName, searchQuery)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 /*
@@ -110,7 +110,7 @@ func checkEmptyFields(user *User) []string {
 	result := make([]string, 0)
 
 	// TODO: Find a better way of doing this kind of checking
-	// For some reason, request of form Username: "" was successful. Look into 
+	// For some reason, request of form Username: "" was successful. Look into
 	// this.
 	if user.Username == "" {
 		result = append(result, "username")
@@ -122,12 +122,12 @@ func checkEmptyFields(user *User) []string {
 // TODO: Have this return a PasswordValidationError rather than a bool
 // Maybe have validators return the error with appropriate message
 func passwordValid(password string) bool {
-    for _, validator := range security.PasswordPolicy.Validations {
-        if !validator(password) {
-            return false
-        }
-    }
-    return true
+	for _, validator := range security.PasswordPolicy.Validations {
+		if !validator(password) {
+			return false
+		}
+	}
+	return true
 }
 
 /*

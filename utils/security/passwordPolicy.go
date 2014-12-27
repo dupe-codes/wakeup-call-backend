@@ -1,20 +1,19 @@
 package security
 
-
 type passwordValidator func(string) bool
 
 type passwordPolicy struct {
-    MinimumLength int
-    Validations []passwordValidator
+	MinimumLength int
+	Validations   []passwordValidator
 }
 
 var (
-    minimumLength = 6
-    PasswordPolicy = &passwordPolicy{
-        Validations: []passwordValidator{
-            meetsMinLength,
-        },
-    }
+	minimumLength  = 6
+	PasswordPolicy = &passwordPolicy{
+		Validations: []passwordValidator{
+			meetsMinLength,
+		},
+	}
 )
 
 /*
@@ -22,5 +21,5 @@ var (
  */
 
 func meetsMinLength(password string) bool {
-    return len(password) >= minimumLength
+	return len(password) >= minimumLength
 }

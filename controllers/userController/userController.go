@@ -27,11 +27,11 @@ func CreateUser(res http.ResponseWriter, req *http.Request) {
 		Username: req.PostFormValue("Username"),
 		Fullname: req.PostFormValue("Fullname"),
 	}
-	
+
 	err := newUser.HashPassword(req.PostFormValue("Password"))
 	if err != nil {
-	    fmt.Fprintf(res, "Password is invalid") //TODO: Handle with appropriate http resp
-	    return
+		fmt.Fprintf(res, "Password is invalid") //TODO: Handle with appropriate http resp
+		return
 	}
 
 	// Now attempt to save, create appropriate response
@@ -59,17 +59,17 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	// TODO: Use helper function to check if hashed given pass +
 	// salt == stored hash + salt
 	req.ParseForm()
-    matchedUser, err := user.FindMatchingUser(req.PostFormValue("Username"))
-    if err != nil {
-        fmt.Fprintf(res, err.Error())
-        return
-    }
+	matchedUser, err := user.FindMatchingUser(req.PostFormValue("Username"))
+	if err != nil {
+		fmt.Fprintf(res, err.Error())
+		return
+	}
 
-    if matchedUser.ConfirmPassword(req.PostFormValue("Password")) {
-        fmt.Fprintf(res, "Password matched!")
-    } else {
-        fmt.Fprintf(res, "Passowrd didn't match!")
-    }
+	if matchedUser.ConfirmPassword(req.PostFormValue("Password")) {
+		fmt.Fprintf(res, "Password matched!")
+	} else {
+		fmt.Fprintf(res, "Passowrd didn't match!")
+	}
 	return
 }
 
