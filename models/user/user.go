@@ -30,7 +30,7 @@ var (
 
 // ToString returns a string representation of the receiving user
 func (user *User) ToString() string {
-	return fmt.Sprintf("User %s: %s", user.Username, user.Fullname)
+	return fmt.Sprintf("User %s: %s with (pass: %s, salt: %s)", user.Username, user.Fullname, user.PasswordHash, user.PasswordSalt)
 }
 
 // Save inserts the receiver User into the database.
