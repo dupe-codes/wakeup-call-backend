@@ -36,7 +36,7 @@ func CreateUser(res http.ResponseWriter, req *http.Request) {
 
 	// Now attempt to save, create appropriate response
 	resContent := &APIResponses.Response{}
-	err := newUser.Save()
+	err = newUser.Save()
 	if err != nil {
 		resContent.Status = 400
 		resContent.Error = err
