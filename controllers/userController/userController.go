@@ -9,13 +9,8 @@ import (
 
 	//"github.com/njdup/wakeup-call-backend/conf"
 	"github.com/njdup/wakeup-call-backend/models/user"
+	"github.com/njdup/wakeup-call-backend/utils/responses"
 )
-
-type UserAPIResponse struct {
-	Status int
-	Data   interface{}
-	Error  error
-}
 
 func AllUsers(res http.ResponseWriter, req *http.Request) {
 	return
@@ -36,7 +31,7 @@ func CreateUser(res http.ResponseWriter, req *http.Request) {
 	// Make helpers to do this
 
 	// Now attempt to save, create appropriate response
-	resContent := &UserAPIResponse{}
+	resContent := &APIResponses.Response{}
 	err := newUser.Save()
 	if err != nil {
 		resContent.Status = 400

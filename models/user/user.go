@@ -11,6 +11,7 @@ import (
 
 	"github.com/njdup/wakeup-call-backend/conf"
 	"github.com/njdup/wakeup-call-backend/db"
+	"github.com/njdup/wakeup-call-backend/utils/errors"
 )
 
 type User struct {
@@ -21,14 +22,6 @@ type User struct {
 	PasswordSalt string        `bson:"passwordSalt" json:"-"`
 	Inserted     time.Time     `bson:"inserted" json:"-"`
 }
-
-// TODO: Move creation of error types into utils/ErrorUtils file
-type InvalidFieldsError struct {
-	Message string
-	Fields  []string
-}
-
-func (err *InvalidFieldsError) Error() string { return err.Message }
 
 var (
 	collectionName = "users"
@@ -47,7 +40,10 @@ func (user *User) Save() error {
 	emptyFields := checkEmptyFields(user)
 	if len(emptyFields) != 0 {
 		invalid := strings.Join(emptyFields, " ")
-		return &InvalidFieldsError{"The following fields cannot be empty: " + invalid, emptyFields}
+		return &errorUtils.InvalidFieldsError{
+			"The following fields cannot be empty: " + invalid,
+			emptyFields,
+		}
 	}
 
 	insertQuery := func(col *mgo.Collection) error {
@@ -56,7 +52,10 @@ func (user *User) Save() error {
 			return err
 		}
 		if count != 0 {
-			return &InvalidFieldsError{"A user with the given username already exists", []string{"Username"}}
+			return &errorUtils.InvalidFieldsError{
+			    "A user with the given username already exists",
+			    []string{"Username"},
+			}
 		}
 		user.Inserted = time.Now() // Add insertion time stamp
 		return col.Insert(user)
