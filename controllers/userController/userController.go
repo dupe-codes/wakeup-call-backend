@@ -59,7 +59,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
     matchedUser, err := user.FindMatchingUser(req.PostFormValue("Username"))
     if err != nil {
-        fmt.FPrintf(req, "Error encountered")
+        fmt.Fprintf(req, "Error encountered")
         return
     }
     fmt.Fprintf(res, matchedUser.ToString())
