@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/gorilla/context"
@@ -19,41 +19,41 @@ import (
 func testGroupStuff(res http.ResponseWriter, req *http.Request) {
 
 	user, err := user.FindMatchingUser("njdup")
-    newGroup := &group.Group {
-        Name: "TestGroup11",
-    }
-    err = newGroup.Save()
-    if err != nil {
-        fmt.Fprintf(res, "Error occurred saving the group: %s", err.Error())
-        return
-    }
+	newGroup := &group.Group{
+		Name: "TestGroup16",
+	}
+	err = newGroup.Save()
+	if err != nil {
+		fmt.Fprintf(res, "Error occurred saving the group: %s", err.Error())
+		return
+	}
 
-    err = newGroup.AddUser(user)
-    if err != nil {
-        fmt.Fprintf(res, "Error adding user to the group: %s", err.Error())
-        return
-    }
+	err = newGroup.AddUser(user)
+	if err != nil {
+		fmt.Fprintf(res, "Error adding user to the group: %s", err.Error())
+		return
+	}
 
-    // Grab group again to update its list of users
-    newGroup, err = group.FindMatchingGroup(newGroup.Name)
-    if err != nil {
-        fmt.Fprintf(res, "Error finding group with matching name: %s", err.Error())
-        return
-    }
+	// Grab group again to update its list of users
+	newGroup, err = group.FindMatchingGroup(newGroup.Name)
+	if err != nil {
+		fmt.Fprintf(res, "Error finding group with matching name: %s", err.Error())
+		return
+	}
 
-    users, err := newGroup.Users()
-    if err != nil {
-        fmt.Fprintf(res, "Error encountered getting group users: %s", err.Error())
-        return
-    }
-    userNames := []string{}
-    for _, user := range users {
-        userNames = append(userNames, user.Username)
-    }
-    // users shouldn't be an empty slice now
-    returnString := "Group %s successfully created with following users: " + strings.Join(userNames, ", ")
-    fmt.Fprintf(res, returnString, newGroup.Name)
-    return
+	users, err := newGroup.GetUsers()
+	if err != nil {
+		fmt.Fprintf(res, "Error encountered getting group users: %s", err.Error())
+		return
+	}
+	userNames := []string{}
+	for _, user := range users {
+		userNames = append(userNames, user.Username)
+	}
+	// users shouldn't be an empty slice now
+	returnString := "Group %s successfully created with following users: " + strings.Join(userNames, ", ")
+	fmt.Fprintf(res, returnString, newGroup.Name)
+	return
 }
 
 // ConfigureRoutes sets all API routes
