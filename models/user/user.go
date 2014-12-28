@@ -25,7 +25,7 @@ type User struct {
 }
 
 var (
-	collectionName = "users"
+	CollectionName = "users"
 )
 
 // ToString returns a string representation of the receiving user
@@ -62,7 +62,7 @@ func (user *User) Save() error {
 		return col.Insert(user)
 	}
 
-	return db.ExecWithCol(collectionName, insertQuery)
+	return db.ExecWithCol(CollectionName, insertQuery)
 }
 
 // HashPassword hashes the given password and saves it in the user struct
@@ -94,7 +94,7 @@ func FindMatchingUser(username string) (*User, error) {
 	searchQuery := func(col *mgo.Collection) error {
 		return col.Find(bson.M{"userName": username}).One(&result)
 	}
-	err := db.ExecWithCol(collectionName, searchQuery)
+	err := db.ExecWithCol(CollectionName, searchQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func TestInsert() {
 		return coll.Insert(testEntry)
 	}
 
-	err := db.ExecWithCol(collectionName, query)
+	err := db.ExecWithCol(CollectionName, query)
 	if err != nil {
 		panic(err)
 	}

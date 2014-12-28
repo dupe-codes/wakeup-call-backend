@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
-	//"gopkg.in/mgo.v2/bson"
 	"github.com/gorilla/sessions"
+	"github.com/gorilla/mux"
 
-	//"github.com/njdup/wakeup-call-backend/conf"
 	"github.com/njdup/wakeup-call-backend/models/user"
 	"github.com/njdup/wakeup-call-backend/utils/responses"
 )
@@ -117,4 +116,12 @@ func Logout(sessionStore *sessions.CookieStore) http.Handler {
 		fmt.Fprintf(res, string(payload))
 		return
 	})
+}
+
+// ConfigRoutes initializes all application routes specific to users
+func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
+	router.Handle("/users", CreateUser(sessionStore)).Methods("POST")
+	router.Handle("/users/login", Login(sessionStore)).Methods("POST")
+	router.Handle("/users/logout", Logout(sessionStore)).Methods("POST")
+	router.Handle("/users", AllUsers(sessionStore)).Methods("GET")
 }
