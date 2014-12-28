@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 
 	"github.com/njdup/wakeup-call-backend/conf"
@@ -29,6 +30,8 @@ func configureRoutes(router *mux.Router) {
 
 	router.HandleFunc("/users", userController.CreateUser).Methods("POST")
 	router.HandleFunc("/users/login", userController.Login).Methods("POST")
+	router.HandleFunc("/users/logout", userController.Logout).Methods("POST")
+	router.HandleFunc("/users", userController.AllUsers).Methods("GET")
 }
 
 // Main launches the API server
@@ -37,5 +40,5 @@ func main() {
 	configureRoutes(router)
 
 	http.Handle("/", router)
-	http.ListenAndServe(config.Settings.Port, nil)
+	http.ListenAndServe(config.Settings.Port, context.ClearHandler(http.DefaultServeMux))
 }
