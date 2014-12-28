@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 
 	"github.com/njdup/wakeup-call-backend/conf"
 	"github.com/njdup/wakeup-call-backend/models/user"
@@ -13,31 +14,19 @@ import (
 	"./controllers/userController"
 )
 
-func HomeHandler(res http.ResponseWriter, req *http.Request) {
-	user := &user.User{
-		Fullname: "Mr Dude",
-	}
-	err := user.Save()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Fprintf(res, "This is a test! And the user was correctly saved hooray!")
-}
-
 // ConfigureRoutes sets all API routes
-func configureRoutes(router *mux.Router) {
-	router.HandleFunc("/test/", HomeHandler)
-
-	router.HandleFunc("/users", userController.CreateUser).Methods("POST")
-	router.HandleFunc("/users/login", userController.Login).Methods("POST")
-	router.HandleFunc("/users/logout", userController.Logout).Methods("POST")
-	router.HandleFunc("/users", userController.AllUsers).Methods("GET")
+func configureRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
+	router.Handle("/users", userController.CreateUser(sessionStore)).Methods("POST")
+	router.Handle("/users/login", userController.Login(sessionStore)).Methods("POST")
+	router.Handle("/users/logout", userController.Logout(sessionStore)).Methods("POST")
+	router.Handle("/users", userController.AllUsers(sessionStore)).Methods("GET")
 }
 
 // Main launches the API server
 func main() {
 	router := mux.NewRouter()
-	configureRoutes(router)
+	sessionStore := sessions.NewCookieStore([]byte("something-very-secret"))
+	configureRoutes(router, sessionStore)
 
 	http.Handle("/", router)
 	http.ListenAndServe(config.Settings.Port, context.ClearHandler(http.DefaultServeMux))
