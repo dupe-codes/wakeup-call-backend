@@ -1,7 +1,7 @@
 package errorUtils
 
 type GeneralError struct {
-    Message string
+	Message string
 }
 
 func (err *GeneralError) Error() string { return err.Message }

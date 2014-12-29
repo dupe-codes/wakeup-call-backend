@@ -11,9 +11,9 @@ import (
 
 	"github.com/njdup/wakeup-call-backend/conf"
 
+	"./controllers/groupController"
 	"./controllers/userController"
 	"./models/group"
-	"./controllers/groupController"
 	"github.com/njdup/wakeup-call-backend/models/user"
 )
 
@@ -56,14 +56,14 @@ func testGroupStuff(res http.ResponseWriter, req *http.Request) {
 	// users shouldn't be an empty slice now
 	//returnString := "Group %s successfully created with following users: " + strings.Join(userNames, ", ")
 	//fmt.Fprintf(res, returnString, newGroup.Name)
-    aUser, err = user.FindMatchingUser("njdup")
-    userGroups, err := group.GetGroupsForUser(aUser)
-    groupNames := []string{}
-    for _, userGroup := range userGroups {
-        groupNames = append(groupNames, userGroup.Name)
-    }
-    returnString := "User %s is now in the following groups: " + strings.Join(groupNames, ", ")
-    fmt.Fprintf(res, returnString, aUser.Username)
+	aUser, err = user.FindMatchingUser("njdup")
+	userGroups, err := group.GetGroupsForUser(aUser)
+	groupNames := []string{}
+	for _, userGroup := range userGroups {
+		groupNames = append(groupNames, userGroup.Name)
+	}
+	returnString := "User %s is now in the following groups: " + strings.Join(groupNames, ", ")
+	fmt.Fprintf(res, returnString, aUser.Username)
 	return
 }
 

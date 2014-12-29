@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/sessions"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 
 	"github.com/njdup/wakeup-call-backend/models/user"
 	"github.com/njdup/wakeup-call-backend/utils/responses"
