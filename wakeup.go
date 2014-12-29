@@ -20,7 +20,7 @@ func testGroupStuff(res http.ResponseWriter, req *http.Request) {
 
 	user, err := user.FindMatchingUser("njdup")
 	newGroup := &group.Group{
-		Name: "TestGroup16",
+		Name: "TestGroup17",
 	}
 	err = newGroup.Save()
 	if err != nil {
@@ -51,8 +51,16 @@ func testGroupStuff(res http.ResponseWriter, req *http.Request) {
 		userNames = append(userNames, user.Username)
 	}
 	// users shouldn't be an empty slice now
-	returnString := "Group %s successfully created with following users: " + strings.Join(userNames, ", ")
-	fmt.Fprintf(res, returnString, newGroup.Name)
+	//returnString := "Group %s successfully created with following users: " + strings.Join(userNames, ", ")
+	//fmt.Fprintf(res, returnString, newGroup.Name)
+    user = user.FindMatchingUser("njdup")
+    userGroups, err := group.GetGroupsForUser(user)
+    groupNames := []string{}
+    for _, group := range userGroups {
+        groupNames = append(groupNames, group.Name)
+    }
+    returnString := "User %s is now in the following groups: " + strings.Join(groupNames, ", ")
+    fmt.Fprintf(res, returnString, user.Username)
 	return
 }
 

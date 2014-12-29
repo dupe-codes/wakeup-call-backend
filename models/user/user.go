@@ -13,7 +13,6 @@ import (
 	"github.com/njdup/wakeup-call-backend/db"
 	"github.com/njdup/wakeup-call-backend/utils/errors"
 	"github.com/njdup/wakeup-call-backend/utils/security"
-	"github.com/njdup/wakeup-call-backend/models/group"
 )
 
 type User struct {
