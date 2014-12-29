@@ -15,14 +15,6 @@ import (
 
 func AllUsers(sessionStore *sessions.CookieStore) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		// Simple test to see if user is authenticated
-		session, _ := sessionStore.Get(req, "wakeup-session")
-		username, authenticated := session.Values["user"]
-		if !authenticated {
-			http.Error(res, "You must sign in to gain access here", http.StatusBadRequest)
-			return
-		}
-		fmt.Fprintf(res, "Success! Welcome %s", username)
 		return
 	})
 }
@@ -123,5 +115,4 @@ func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/users", CreateUser(sessionStore)).Methods("POST")
 	router.Handle("/users/login", Login(sessionStore)).Methods("POST")
 	router.Handle("/users/logout", Logout(sessionStore)).Methods("POST")
-	router.Handle("/users", AllUsers(sessionStore)).Methods("GET")
 }
