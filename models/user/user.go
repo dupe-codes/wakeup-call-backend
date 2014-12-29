@@ -13,6 +13,7 @@ import (
 	"github.com/njdup/wakeup-call-backend/db"
 	"github.com/njdup/wakeup-call-backend/utils/errors"
 	"github.com/njdup/wakeup-call-backend/utils/security"
+	"github.com/njdup/wakeup-call-backend/models/group"
 )
 
 type User struct {
@@ -22,6 +23,8 @@ type User struct {
 	PasswordHash string        `bson:"passwordHash" json:"-"`
 	PasswordSalt string        `bson:"passwordSalt" json:"-"`
 	Inserted     time.Time     `bson:"inserted" json:"-"`
+
+	Groups []bson.ObjectID `bson:"groups" json:"groups"`
 }
 
 var (
