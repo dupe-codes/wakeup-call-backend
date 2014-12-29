@@ -22,16 +22,6 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
             errorMsg := &errorUtils.GeneralError{Message: "You must sign in to create a group"}
             APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
             return
-            /*
-            resContent := &APIResponses.Response{Status: http.StatusBadRequest, Error: errorMsg}
-            response, err := json.MarshalIndent(resContent, "", "  ")
-            if err != nil {
-                http.Error(res, "Error preparing response", http.StatusInternalServerError)
-                return
-            }
-            http.Error(res, string(response), http.StatusBadRequest)
-            return
-            */
         }
 
         // Create and save the new group
@@ -39,14 +29,7 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
         newGroup := &group.Group{Name: req.PostFormValue("Name")}
         err := newGroup.Save()
         if err != nil {
-            // TODO: Repeated code here, refactor into responses util function
-            resContent := &APIResponses.Response{Status: http.StatusBadRequest, Error: err}
-            response, err := json.MarshalIndent(resContent, "", "  ")
-            if err != nil {
-                http.Error(res, "Error preparing response", http.StatusInternalServerError)
-                return
-            }
-            http.Error(res, string(response), http.StatusBadRequest)
+            APIResponses.SendErrorResponse(err, http.StatusBadRequest, res)
             return
         }
 
@@ -57,7 +40,9 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
         err = newGroup.AddUser(creator)
 
         // If we reach here, group has been created + user added successfully
-        // TODO: Make SuccessResponse util function
+        APIResponses.SendSuccessResponse("Success", res)
+        return
+        /*
         resContent := &APIResponses.Response{Status: http.StatusOK, Data: "Success"}
         response, err := json.MarshalIndent(resContent, "", "  ")
         if err != nil {
@@ -66,6 +51,7 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
         }
         fmt.Fprintf(res, string(response))
         return
+        */
     })
 }
 
