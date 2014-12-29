@@ -1,8 +1,12 @@
 package errorUtils
 
+type GeneralError struct {
+    Message string
+}
+
 type InvalidFieldsError struct {
-	Message string
+	GeneralError
 	Fields  []string
 }
 
-func (err *InvalidFieldsError) Error() string { return err.Message }
+func (err *GeneralError) Error() string { return err.Message }

@@ -13,22 +13,25 @@ import (
 
 	"./controllers/userController"
 	"./models/group"
+	"./controllers/groupController"
 	"github.com/njdup/wakeup-call-backend/models/user"
 )
 
 func testGroupStuff(res http.ResponseWriter, req *http.Request) {
 
-	user, err := user.FindMatchingUser("njdup")
+	aUser, err := user.FindMatchingUser("njdup")
 	newGroup := &group.Group{
-		Name: "TestGroup17",
+		//Name: "TestGroup19",
+		Name: "TheTrynas",
 	}
 	err = newGroup.Save()
 	if err != nil {
 		fmt.Fprintf(res, "Error occurred saving the group: %s", err.Error())
 		return
 	}
+	newGroup, err = group.FindMatchingGroup(newGroup.Name)
 
-	err = newGroup.AddUser(user)
+	err = newGroup.AddUser(aUser)
 	if err != nil {
 		fmt.Fprintf(res, "Error adding user to the group: %s", err.Error())
 		return
@@ -47,33 +50,34 @@ func testGroupStuff(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	userNames := []string{}
-	for _, user := range users {
-		userNames = append(userNames, user.Username)
+	for _, aUser := range users {
+		userNames = append(userNames, aUser.Username)
 	}
 	// users shouldn't be an empty slice now
 	//returnString := "Group %s successfully created with following users: " + strings.Join(userNames, ", ")
 	//fmt.Fprintf(res, returnString, newGroup.Name)
-    user = user.FindMatchingUser("njdup")
-    userGroups, err := group.GetGroupsForUser(user)
+    aUser, err = user.FindMatchingUser("njdup")
+    userGroups, err := group.GetGroupsForUser(aUser)
     groupNames := []string{}
-    for _, group := range userGroups {
-        groupNames = append(groupNames, group.Name)
+    for _, userGroup := range userGroups {
+        groupNames = append(groupNames, userGroup.Name)
     }
     returnString := "User %s is now in the following groups: " + strings.Join(groupNames, ", ")
-    fmt.Fprintf(res, returnString, user.Username)
+    fmt.Fprintf(res, returnString, aUser.Username)
 	return
 }
 
 // ConfigureRoutes sets all API routes
 func configureRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	userController.ConfigRoutes(router, sessionStore)
+	groupController.ConfigRoutes(router, sessionStore)
 	router.HandleFunc("/test", testGroupStuff)
 }
 
 // Main launches the API server
 func main() {
 	router := mux.NewRouter()
-	sessionStore := sessions.NewCookieStore([]byte("something-very-secret"))
+	sessionStore := sessions.NewCookieStore([]byte("something-very-secret")) //TODO: Fix secret key
 	configureRoutes(router, sessionStore)
 
 	http.Handle("/", router)
