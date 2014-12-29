@@ -23,7 +23,7 @@ type User struct {
 	PasswordSalt string        `bson:"passwordSalt" json:"-"`
 	Inserted     time.Time     `bson:"inserted" json:"-"`
 
-	Groups []bson.ObjectID `bson:"groups" json:"groups"`
+	Groups []bson.ObjectId `bson:"groups" json:"groups"`
 }
 
 var (
