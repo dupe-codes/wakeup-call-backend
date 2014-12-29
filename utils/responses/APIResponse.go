@@ -3,8 +3,6 @@ package APIResponses
 import (
     "encoding/json"
     "net/http"
-
-    "github.com/njdup/wakeup-call-backend/utils/errors"
 )
 
 type Response struct {
