@@ -1,7 +1,6 @@
 package user
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -9,7 +8,6 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/njdup/wakeup-call-backend/conf"
 	"github.com/njdup/wakeup-call-backend/db"
 	"github.com/njdup/wakeup-call-backend/utils/errors"
 	"github.com/njdup/wakeup-call-backend/utils/security"
