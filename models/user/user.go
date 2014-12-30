@@ -18,7 +18,8 @@ import (
 type User struct {
 	Id           bson.ObjectId `bson:"_id,omitempty" json: "-"`
 	Username     string        `bson:"userName" json:"userName"`
-	Fullname     string        `bson:"fullName" json:"fullName"`
+	Firstname     string        `bson:"firstName" json:"firstName"`
+	Lastname    string          `bson:"lastName" json:"lastName"`
 	PasswordHash string        `bson:"passwordHash" json:"-"`
 	PasswordSalt string        `bson:"passwordSalt" json:"-"`
 	Inserted     time.Time     `bson:"inserted" json:"-"`
@@ -115,7 +116,7 @@ func checkEmptyFields(user *User) []string {
 	// For some reason, request of form Username: "" was successful. Look into
 	// this.
 	if user.Username == "" {
-		result = append(result, "username")
+		result = append(result, "Username")
 	}
 	return result
 }

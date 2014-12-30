@@ -1,3 +1,5 @@
+// TODO: Clean up this file with new tricks like your new response utils
+
 package userController
 
 import (
@@ -11,6 +13,7 @@ import (
 
 	"github.com/njdup/wakeup-call-backend/models/user"
 	"github.com/njdup/wakeup-call-backend/utils/responses"
+	"github.com/njdup/wakeup-call-backend/utils/errors"
 )
 
 func AllUsers(sessionStore *sessions.CookieStore) http.Handler {
@@ -28,13 +31,18 @@ func CreateUser(sessionStore *sessions.CookieStore) http.Handler {
 		// Prepare new user from form data
 		req.ParseForm()
 		newUser := &user.User{
-			Username: req.PostFormValue("Username"),
-			Fullname: req.PostFormValue("Fullname"),
+			Username: req.FormValue("Username"),
+			Firstname: req.FormValue("Firstname"),
+			Lastname: req.FormValue("Lastname"),
 		}
 
-		err := newUser.HashPassword(req.PostFormValue("Password"))
+		err := newUser.HashPassword(req.FormValue("Password"))
 		if err != nil {
-			fmt.Fprintf(res, "Password is invalid") //TODO: Handle with appropriate http resp
+			errorMsg := &errorUtils.InvalidFieldsError{
+			    Message: "The given password is invalid",
+			    Fields: []string{"Password"},
+			}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
 			return
 		}
 
@@ -70,13 +78,13 @@ func Login(sessionStore *sessions.CookieStore) http.Handler {
 
 		// Otherwise, try authenticating
 		req.ParseForm()
-		matchedUser, err := user.FindMatchingUser(req.PostFormValue("Username"))
+		matchedUser, err := user.FindMatchingUser(req.FormValue("Username"))
 		if err != nil {
 			fmt.Fprintf(res, err.Error())
 			return
 		}
 
-		if matchedUser.ConfirmPassword(req.PostFormValue("Password")) {
+		if matchedUser.ConfirmPassword(req.FormValue("Password")) {
 			session.Values["user"] = matchedUser.Username
 			session.Save(req, res)
 
