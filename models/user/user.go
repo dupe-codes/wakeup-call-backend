@@ -49,7 +49,9 @@ func (user *User) Save() error {
 		}
 	}
 
+    // TODO: Decompose this long query
 	insertQuery := func(col *mgo.Collection) error {
+        // First check if username already taken
 		count, err := col.Find(bson.M{"userName": user.Username}).Limit(1).Count()
 		if err != nil {
 			return err
@@ -60,6 +62,21 @@ func (user *User) Save() error {
 				[]string{"Username"},
 			}
 		}
+
+		// Next check if phone number already in use
+        count, err = col.Find(bson.M{"phoneNumber": user.Phonenumber}).Limit(1).Count()
+        if err != nil {
+            return err
+        }
+
+        if count != 0 {
+            return &errorUtils.InvalidFieldsError{
+                "A user with the given phone number already exists",
+                []string{"Phonenumber"},
+            }
+        }
+
+        // All clear at this point, good to insert into db
 		user.Inserted = time.Now() // Add insertion time stamp
 		return col.Insert(user)
 	}
