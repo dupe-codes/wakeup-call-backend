@@ -36,6 +36,7 @@ func CreateUser(sessionStore *sessions.CookieStore) http.Handler {
 			Lastname:  req.FormValue("Lastname"),
 		}
 
+		// TODO: Add parsePhonenumber to user model
 		phonenumber, err := parsePhonenumber(req.FormValue("Phonenumber"))
 		if err != nil {
 			errorMsg := &errorUtils.InvalidFieldsError{
