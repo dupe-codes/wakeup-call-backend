@@ -33,7 +33,7 @@ var (
 
 // ToString returns a string representation of the receiving user
 func (user *User) ToString() string {
-	return fmt.Sprintf("User %s: %s with (pass: %s, salt: %s)", user.Username, user.Fullname, user.PasswordHash, user.PasswordSalt)
+	return fmt.Sprintf("User %s: %s with (pass: %s, salt: %s)", user.Username, user.Firstname, user.PasswordHash, user.PasswordSalt)
 }
 
 // Save inserts the receiver User into the database.
@@ -131,35 +131,4 @@ func passwordValid(password string) bool {
 		}
 	}
 	return true
-}
-
-/*
- * Testing Code (Bad form, should just make actual tests, but this'll do as I
- * continue learning Go to begin with ^_^)
- */
-
-func TestInsert() {
-	testEntry := &User{
-		Username:     "test",
-		Fullname:     "test_guy",
-		PasswordHash: "hello",
-		PasswordSalt: config.Settings.DatabaseUrl,
-	}
-
-	query := func(coll *mgo.Collection) error {
-		count, err := coll.Find(bson.M{"userName": testEntry.Username}).Limit(1).Count()
-		if err != nil {
-			return err
-		}
-		if count > 0 {
-			return errors.New("Entry already exists")
-		}
-		return coll.Insert(testEntry)
-	}
-
-	err := db.ExecWithCol(CollectionName, query)
-	if err != nil {
-		panic(err)
-	}
-	return
 }
