@@ -12,8 +12,8 @@ import (
 	"github.com/gorilla/sessions"
 
 	"github.com/njdup/wakeup-call-backend/models/user"
-	"github.com/njdup/wakeup-call-backend/utils/responses"
 	"github.com/njdup/wakeup-call-backend/utils/errors"
+	"github.com/njdup/wakeup-call-backend/utils/responses"
 )
 
 func AllUsers(sessionStore *sessions.CookieStore) http.Handler {
@@ -31,16 +31,27 @@ func CreateUser(sessionStore *sessions.CookieStore) http.Handler {
 		// Prepare new user from form data
 		req.ParseForm()
 		newUser := &user.User{
-			Username: req.FormValue("Username"),
+			Username:  req.FormValue("Username"),
 			Firstname: req.FormValue("Firstname"),
-			Lastname: req.FormValue("Lastname"),
+			Lastname:  req.FormValue("Lastname"),
 		}
 
-		err := newUser.HashPassword(req.FormValue("Password"))
+		phonenumber, err := parsePhonenumber(req.FormValue("Phonenumber"))
 		if err != nil {
 			errorMsg := &errorUtils.InvalidFieldsError{
-			    Message: "The given password is invalid",
-			    Fields: []string{"Password"},
+				Message: "Given phone number is invalid",
+				Fields:  []string{"Phonenumber"},
+			}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
+		newUser.Phonenumber = phonenumber
+
+		err = newUser.HashPassword(req.FormValue("Password"))
+		if err != nil {
+			errorMsg := &errorUtils.InvalidFieldsError{
+				Message: "The given password is invalid",
+				Fields:  []string{"Password"},
 			}
 			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
 			return
@@ -123,4 +134,9 @@ func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/users", CreateUser(sessionStore)).Methods("POST")
 	router.Handle("/users/login", Login(sessionStore)).Methods("POST")
 	router.Handle("/users/logout", Logout(sessionStore)).Methods("POST")
+}
+
+// TODO: Write this to format phone numbers given in form
+func parsePhonenumber(inputNumber string) (string, error) {
+	return inputNumber, nil
 }

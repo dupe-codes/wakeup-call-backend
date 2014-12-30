@@ -16,11 +16,12 @@ import (
 type User struct {
 	Id           bson.ObjectId `bson:"_id,omitempty" json: "-"`
 	Username     string        `bson:"userName" json:"userName"`
-	Firstname     string        `bson:"firstName" json:"firstName"`
-	Lastname    string          `bson:"lastName" json:"lastName"`
+	Firstname    string        `bson:"firstName" json:"firstName"`
+	Lastname     string        `bson:"lastName" json:"lastName"`
 	PasswordHash string        `bson:"passwordHash" json:"-"`
 	PasswordSalt string        `bson:"passwordSalt" json:"-"`
 	Inserted     time.Time     `bson:"inserted" json:"-"`
+	Phonenumber  string        `bson:"phoneNumber" json: "phoneNumber"`
 
 	Groups []bson.ObjectId `bson:"groups" json:"groups"`
 }
@@ -110,11 +111,11 @@ func FindMatchingUser(username string) (*User, error) {
 func checkEmptyFields(user *User) []string {
 	result := make([]string, 0)
 
-	// TODO: Find a better way of doing this kind of checking
-	// For some reason, request of form Username: "" was successful. Look into
-	// this.
 	if user.Username == "" {
 		result = append(result, "Username")
+	}
+	if user.Phonenumber == "" {
+		result = append(result, "Phonenumber")
 	}
 	return result
 }

@@ -50,7 +50,7 @@ func (group *Group) Save() error {
 // Returns nil on success, encountered error on failure
 // TODO: Group object will probably be out of date after this. Check that.
 func (group *Group) AddUser(newUser *user.User) error {
-    // First add user id to group's user array
+	// First add user id to group's user array
 	addUserQuery := func(col *mgo.Collection) error {
 		groupSelector := bson.M{"groupName": group.Name}
 		update := bson.M{"$push": bson.M{"users": newUser.Id}}
@@ -58,14 +58,14 @@ func (group *Group) AddUser(newUser *user.User) error {
 	}
 	err := db.ExecWithCol(CollectionName, addUserQuery)
 	if err != nil {
-	    return err
+		return err
 	}
 
-    // Next, add group id to user's group array
+	// Next, add group id to user's group array
 	addGroupQuery := func(col *mgo.Collection) error {
-	    userSelector := bson.M{"userName": newUser.Username}
-	    update := bson.M{"$push": bson.M{"groups": group.Id}}
-	    return col.Update(userSelector, update)
+		userSelector := bson.M{"userName": newUser.Username}
+		update := bson.M{"$push": bson.M{"groups": group.Id}}
+		return col.Update(userSelector, update)
 	}
 	return db.ExecWithCol(user.CollectionName, addGroupQuery)
 }
@@ -96,13 +96,13 @@ func FindMatchingGroup(groupName string) (*Group, error) {
 }
 
 func GetGroupsForUser(user *user.User) ([]Group, error) {
-    userGroups := []Group{}
-    searchQuery := func(col *mgo.Collection) error {
-        return col.Find(bson.M{"_id": bson.M{"$in": user.Groups}}).All(&userGroups)
-    }
-    err := db.ExecWithCol(CollectionName, searchQuery)
-    if err != nil {
-        return nil, err
-    }
-    return userGroups, nil
+	userGroups := []Group{}
+	searchQuery := func(col *mgo.Collection) error {
+		return col.Find(bson.M{"_id": bson.M{"$in": user.Groups}}).All(&userGroups)
+	}
+	err := db.ExecWithCol(CollectionName, searchQuery)
+	if err != nil {
+		return nil, err
+	}
+	return userGroups, nil
 }
