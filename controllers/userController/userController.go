@@ -4,7 +4,6 @@ package userController
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -104,10 +103,12 @@ func Login(sessionStore *sessions.CookieStore) http.Handler {
 			payload, _ := json.MarshalIndent(resContent, "", "  ")
 			fmt.Fprintf(res, string(payload))
 		} else {
-			err = errors.New("Given password is incorrect")
-			resContent := &APIResponses.Response{Status: 400, Error: err}
-			payload, _ := json.MarshalIndent(resContent, "", " ")
-			fmt.Fprintf(res, string(payload))
+	        errorMsg := &errorUtils.InvalidFieldsError{
+				Message: "The given password is incorrect",
+				Fields:  []string{"Password"},
+			}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
 		}
 		return
 	})
