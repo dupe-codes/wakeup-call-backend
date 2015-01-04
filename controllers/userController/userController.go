@@ -170,6 +170,7 @@ func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/users", CreateUser(sessionStore)).Methods("POST")
 	router.Handle("/users/login", Login(sessionStore)).Methods("POST")
 	router.Handle("/users/logout", Logout(sessionStore)).Methods("POST")
+	router.Handle("/users/info", GetUser(sessionStore)).Methods("GET")
 	router.Handle("/users/sessioncheck", CheckSession(sessionStore)).Methods("GET")
 }
 
