@@ -21,8 +21,28 @@ func AllUsers(sessionStore *sessions.CookieStore) http.Handler {
 	})
 }
 
-func GetUser(res http.ResponseWriter, req *http.Request) {
-	return
+// GetUser returns information for a currently signed in user
+func GetUser(sessionStore *sessions.CookieStore) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        // First ensure that a user is logged in
+        session, _ := sessionStore.Get(req, "wakeup-session")
+        username, authenticated := session.Values["user"]
+        if !authenticated {
+            errorMsg := &errorUtils.GeneralError{Message: "You must be signed in to get your user info"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+            return
+        }
+
+        usernameStr := fmt.Sprintf("%s", username)
+        user, err := user.FindMatchingUser(usernameStr)
+        if err != nil {
+            errorMsg := &errorUtils.GeneralError{Message: "Unable to retrieve user information"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+            return
+        }
+        APIResponses.SendSuccessResponse(user, res)
+        return
+	})
 }
 
 func CreateUser(sessionStore *sessions.CookieStore) http.Handler {

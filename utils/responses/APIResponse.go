@@ -23,7 +23,7 @@ func SendErrorResponse(errorMsg error, status int, res http.ResponseWriter) {
 	return
 }
 
-func SendSuccessResponse(data string, res http.ResponseWriter) {
+func SendSuccessResponse(data interface{}, res http.ResponseWriter) {
 	resContent := &Response{Status: http.StatusOK, Data: data}
 	response, err := json.MarshalIndent(resContent, "", "  ")
 	if err != nil {
