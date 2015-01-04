@@ -103,7 +103,7 @@ func Login(sessionStore *sessions.CookieStore) http.Handler {
 			payload, _ := json.MarshalIndent(resContent, "", "  ")
 			fmt.Fprintf(res, string(payload))
 		} else {
-	        errorMsg := &errorUtils.InvalidFieldsError{
+			errorMsg := &errorUtils.InvalidFieldsError{
 				Message: "The given password is incorrect",
 				Fields:  []string{"Password"},
 			}
@@ -131,11 +131,26 @@ func Logout(sessionStore *sessions.CookieStore) http.Handler {
 	})
 }
 
+// CheckSession determines whether the given request's cookie is valid
+func CheckSession(sessionStore *sessions.CookieStore) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		session, _ := sessionStore.Get(req, "wakeup-session")
+		if _, ok := session.Values["user"]; ok {
+			APIResponses.SendSuccessResponse("Valid cookie found", res)
+			return
+		}
+		errorMsg := &errorUtils.GeneralError{Message: "Invalid cookie given"}
+		APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+		return
+	})
+}
+
 // ConfigRoutes initializes all application routes specific to users
 func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/users", CreateUser(sessionStore)).Methods("POST")
 	router.Handle("/users/login", Login(sessionStore)).Methods("POST")
 	router.Handle("/users/logout", Logout(sessionStore)).Methods("POST")
+	router.Handle("/users/sessioncheck", CheckSession(sessionStore)).Methods("GET")
 }
 
 // TODO: Write this to format phone numbers given in form
