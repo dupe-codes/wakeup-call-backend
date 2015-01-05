@@ -23,14 +23,6 @@ func getDbSession() *mgo.Session {
 	return mgoSession.Clone()
 }
 
-// CloseDbSession closes the global db connection
-// TODO: Needed?
-func closeDbSession() {
-	if mgoSession != nil {
-		mgoSession.Close()
-	}
-}
-
 // ExecWithCol executes the given query function on the given database
 // collection
 // Returns any error encountered from executing the query function

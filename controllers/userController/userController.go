@@ -10,8 +10,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 
-	"github.com/njdup/wakeup-call-backend/models/user"
 	"github.com/njdup/wakeup-call-backend/models/group"
+	"github.com/njdup/wakeup-call-backend/models/user"
 	"github.com/njdup/wakeup-call-backend/utils/errors"
 	"github.com/njdup/wakeup-call-backend/utils/responses"
 )
@@ -25,24 +25,24 @@ func AllUsers(sessionStore *sessions.CookieStore) http.Handler {
 // GetUser returns information for a currently signed in user
 func GetUser(sessionStore *sessions.CookieStore) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-        // First ensure that a user is logged in
-        session, _ := sessionStore.Get(req, "wakeup-session")
-        username, authenticated := session.Values["user"]
-        if !authenticated {
-            errorMsg := &errorUtils.GeneralError{Message: "You must be signed in to get your user info"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
-            return
-        }
+		// First ensure that a user is logged in
+		session, _ := sessionStore.Get(req, "wakeup-session")
+		username, authenticated := session.Values["user"]
+		if !authenticated {
+			errorMsg := &errorUtils.GeneralError{Message: "You must be signed in to get your user info"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
 
-        usernameStr := fmt.Sprintf("%s", username)
-        user, err := user.FindMatchingUser(usernameStr)
-        if err != nil {
-            errorMsg := &errorUtils.GeneralError{Message: "Unable to retrieve user information"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
-            return
-        }
-        APIResponses.SendSuccessResponse(user, res)
-        return
+		usernameStr := fmt.Sprintf("%s", username)
+		user, err := user.FindMatchingUser(usernameStr)
+		if err != nil {
+			errorMsg := &errorUtils.GeneralError{Message: "Unable to retrieve user information"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+			return
+		}
+		APIResponses.SendSuccessResponse(user, res)
+		return
 	})
 }
 
@@ -167,33 +167,33 @@ func CheckSession(sessionStore *sessions.CookieStore) http.Handler {
 }
 
 func GetUserGroups(sessionStore *sessions.CookieStore) http.Handler {
-    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-        session, _ := sessionStore.Get(req, "wakeup-session")
-        if _, ok := session.Values["user"]; !ok {
-            errorMsg := &errorUtils.GeneralError{Message: "You must be signed in to retrieve a user's groups"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
-            return
-        }
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		session, _ := sessionStore.Get(req, "wakeup-session")
+		if _, ok := session.Values["user"]; !ok {
+			errorMsg := &errorUtils.GeneralError{Message: "You must be signed in to retrieve a user's groups"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
 
-        vars := mux.Vars(req)
-        username := vars["username"]
-        user, err := user.FindMatchingUser(username)
-        if err != nil {
-            errorMsg := &errorUtils.GeneralError{Message: "A user matching the given username was not found"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
-            return
-        }
+		vars := mux.Vars(req)
+		username := vars["username"]
+		user, err := user.FindMatchingUser(username)
+		if err != nil {
+			errorMsg := &errorUtils.GeneralError{Message: "A user matching the given username was not found"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
 
-        groups, err := group.GetGroupsForUser(user)
-        if err != nil {
-            errorMsg := &errorUtils.GeneralError{Message: "An error occurred retrieving the user's groups"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
-            return
-        }
+		groups, err := group.GetGroupsForUser(user)
+		if err != nil {
+			errorMsg := &errorUtils.GeneralError{Message: "An error occurred retrieving the user's groups"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+			return
+		}
 
-        APIResponses.SendSuccessResponse(groups, res)
-        return
-    })
+		APIResponses.SendSuccessResponse(groups, res)
+		return
+	})
 }
 
 // ConfigRoutes initializes all application routes specific to users

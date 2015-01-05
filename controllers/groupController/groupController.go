@@ -3,7 +3,6 @@ package groupController
 import (
 	"fmt"
 	"net/http"
-	//"encoding/json"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -36,9 +35,9 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
 		// After group created, provision its phone number
 		err = newGroup.ProvisionPhoneNumber()
 		if err != nil {
-            errorMsg := &errorUtils.GeneralError{"Error provisioning group phone number"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
-            return
+			errorMsg := &errorUtils.GeneralError{"Error provisioning group phone number"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+			return
 		}
 
 		// Now auto add creator to the new group
