@@ -19,7 +19,7 @@ type Group struct {
 	Id      bson.ObjectId `bson:"_id,omitempty" json: "-"`
 	Name    string        `bson:"groupName" json:"groupName"`
 	Created time.Time     `bson:"created" json:"-"`
-	Phonenumber string    `bson:"phoneNumber json:"phoneNumber"`
+	Phonenumber string    `bson:"phoneNumber" json:"phoneNumber"`
 
 	Users []bson.ObjectId `bson:"users" json:"users"`
 }

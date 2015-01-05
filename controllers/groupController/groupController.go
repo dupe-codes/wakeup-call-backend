@@ -33,6 +33,14 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
 			return
 		}
 
+		// After group created, provision its phone number
+		err = newGroup.ProvisionPhoneNumber()
+		if err != nil {
+            errorMsg := &errorUtils.GeneralError{"Error provisioning group phone number"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+            return
+		}
+
 		// Now auto add creator to the new group
 		// TODO: Handle errors
 		newGroup, err = group.FindMatchingGroup(newGroup.Name) // Need to update w/ db info
