@@ -21,9 +21,9 @@ type User struct {
 	PasswordHash string        `bson:"passwordHash" json:"-"`
 	PasswordSalt string        `bson:"passwordSalt" json:"-"`
 	Inserted     time.Time     `bson:"inserted" json:"-"`
-	Phonenumber  string        `bson:"phoneNumber" json: "phoneNumber"`
+	Phonenumber  string        `bson:"phoneNumber" json:"phoneNumber"`
 
-	Groups []bson.ObjectId `bson:"groups" json:"groups"`
+	Groups []bson.ObjectId `bson:"groups" json:"-"`
 }
 
 var (
