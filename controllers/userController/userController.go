@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/sessions"
 
 	"github.com/njdup/wakeup-call-backend/models/user"
+	"github.com/njdup/wakeup-call-backend/models/group"
 	"github.com/njdup/wakeup-call-backend/utils/errors"
 	"github.com/njdup/wakeup-call-backend/utils/responses"
 )
@@ -165,12 +166,44 @@ func CheckSession(sessionStore *sessions.CookieStore) http.Handler {
 	})
 }
 
+func GetUserGroups(sessionStore *sessions.CookieStore) http.Handler {
+    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        session, _ := sessionStore.Get(req, "wakeup-session")
+        if _, ok := session.Values["user"]; !ok {
+            errorMsg := &errorUtils.GeneralError{Message: "You must be signed in to retrieve a user's groups"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+            return
+        }
+
+        vars := mux.Vars(req)
+        username := vars["username"]
+        user, err := user.FindMatchingUser(username)
+        if err != nil {
+            errorMsg := &errorUtils.GeneralError{Message: "A user matching the given username was not found"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+            return
+        }
+
+        groups, err := group.GetGroupsForUser(user)
+        if err != nil {
+            errorMsg := &errorUtils.GeneralError{Message: "An error occurred retrieving the user's groups"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+            return
+        }
+
+        APIResponses.SendSuccessResponse(groups, res)
+        return
+    })
+}
+
 // ConfigRoutes initializes all application routes specific to users
 func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/users", CreateUser(sessionStore)).Methods("POST")
 	router.Handle("/users/login", Login(sessionStore)).Methods("POST")
 	router.Handle("/users/logout", Logout(sessionStore)).Methods("POST")
 	router.Handle("/users/info", GetUser(sessionStore)).Methods("GET")
+	router.Handle("/users/{username}/groups", GetUserGroups(sessionStore)).Methods("GET")
+
 	router.Handle("/users/sessioncheck", CheckSession(sessionStore)).Methods("GET")
 }
 
