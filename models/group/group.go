@@ -19,6 +19,7 @@ type Group struct {
 	Id      bson.ObjectId `bson:"_id,omitempty" json: "-"`
 	Name    string        `bson:"groupName" json:"groupName"`
 	Created time.Time     `bson:"created" json:"-"`
+	Phonenumber string    `bson:"phoneNumber json:"phoneNumber"`
 
 	Users []bson.ObjectId `bson:"users" json:"users"`
 }
@@ -42,6 +43,18 @@ func (group *Group) Save() error {
 	}
 
 	return db.ExecWithCol(CollectionName, insertQuery)
+}
+
+// ProvisionPhoneNumber assigns a Twilio phone number for the group
+// TODO: For now, returns trial number. Replace with creating # programatically
+func (group *Group) ProvisionPhoneNumber() error {
+    addNumberQuery := func(col *mgo.Collection) error {
+        groupSelector := bson.M{"groupName": group.Name}
+        update := bson.M{"$set": bson.M{"phoneNumber": "18705251963"}}
+        return col.Update(groupSelector, update)
+    }
+    err := db.ExecWithCol(CollectionName, addNumberQuery)
+    return err
 }
 
 // AddUser adds the given user to the receiver group
