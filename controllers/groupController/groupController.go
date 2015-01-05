@@ -46,6 +46,47 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
 	})
 }
 
+func GetGroupUsers(sessionStore *sessions.CookieStore) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		vars := mux.Vars(req)
+		groupName := vars["groupName"]
+		group, err := group.FindMatchingGroup(groupName)
+		if err != nil {
+			errorMsg := &errorUtils.GeneralError{"No group matching the given group name was found"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
+
+		users, err := group.GetUsers()
+		if err != nil {
+			errorMsg := &errorUtils.GeneralError{"Error occurred fetching the group's users"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+			return
+		}
+
+		APIResponses.SendSuccessResponse(users, res)
+		return
+	})
+}
+
+func GetGroup(sessionStore *sessions.CookieStore) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		vars := mux.Vars(req)
+		groupName := vars["groupName"]
+		group, err := group.FindMatchingGroup(groupName)
+		if err != nil {
+			errorMsg := &errorUtils.GeneralError{"No group matching the given group name was found"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
+
+		APIResponses.SendSuccessResponse(group, res)
+		return
+	})
+}
+
 func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/groups", CreateGroup(sessionStore)).Methods("POST")
+	router.Handle("/groups/{groupName}/users", GetGroupUsers(sessionStore)).Methods("GET")
+	router.Handle("/groups/{groupName}", GetGroup(sessionStore)).Methods("GET")
 }
