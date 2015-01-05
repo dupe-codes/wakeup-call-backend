@@ -26,7 +26,7 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
 
 		// Create and save the new group
 		req.ParseForm()
-		newGroup := &group.Group{Name: req.PostFormValue("Name")}
+		newGroup := &group.Group{Name: req.FormValue("Name")}
 		err := newGroup.Save()
 		if err != nil {
 			APIResponses.SendErrorResponse(err, http.StatusBadRequest, res)
