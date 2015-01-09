@@ -21,6 +21,7 @@ func configureRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 
 // Main launches the API server
 func main() {
+	fmt.Println("Hello")
 	router := mux.NewRouter()
 	sessionStore := sessions.NewCookieStore([]byte("something-very-secret")) //TODO: Fix secret key
 	configureRoutes(router, sessionStore)
