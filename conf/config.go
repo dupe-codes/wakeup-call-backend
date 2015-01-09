@@ -1,5 +1,9 @@
 package config
 
+import (
+    "os"
+)
+
 var (
 	Settings = getConfig()
 )
@@ -18,8 +22,16 @@ func getConfig() *Config {
 	config.ProjectName = "Wakeup_Call"
 	config.Port = ":8080"
 
-	config.DatabaseUrl = "localhost"
-	config.DatabaseName = "wakeup-call-dev"
+
+    // Set up database connection url
+    databaseUrl := os.Getenv("MONGOLAB_URI")
+    if databaseUrl == "" {
+	    config.DatabaseUrl = "localhost"
+        config.DatabaseName = "wakeup-call-dev"
+	} else {
+	    config.DatabaseUrl = databaseUrl
+	    config.DatabaseName = "wakeup-call-prod"
+	}
 
 	return config
 }
