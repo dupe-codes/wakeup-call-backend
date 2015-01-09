@@ -1,1 +1,1 @@
-web: wakeup-call-backend -port=$PORT
+web: helloLOL
