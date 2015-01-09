@@ -12,3 +12,7 @@
 
 # Ignore compiled project file
 wakeup-call-backend
+
+# Not needed godep stuff
+Godeps/_workspace/*
+Godeps/Readme
