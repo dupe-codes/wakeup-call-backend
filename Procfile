@@ -1,1 +1,1 @@
-web: wakeup-call-backend
+web: wakeup

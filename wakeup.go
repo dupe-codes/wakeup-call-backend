@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"fmt"
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
@@ -25,5 +26,6 @@ func main() {
 	configureRoutes(router, sessionStore)
 
 	http.Handle("/", router)
+	fmt.Println("Listening on port " + config.Settings.Port)
 	http.ListenAndServe(config.Settings.Port, context.ClearHandler(http.DefaultServeMux))
 }
