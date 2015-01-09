@@ -20,8 +20,13 @@ func getConfig() *Config {
 	config := new(Config)
 
 	config.ProjectName = "Wakeup_Call"
-	config.Port = ":8080"
 
+    port := os.Getenv("PORT")
+    if port == "" {
+        config.Port = ":8080"
+    } else {
+        config.Port = ":" + port
+    }
 
     // Set up database connection url
     databaseUrl := os.Getenv("MONGOLAB_URI")
