@@ -1,1 +1,1 @@
-web: echo 'Excuse me'
+web: wakeup-call-backend
