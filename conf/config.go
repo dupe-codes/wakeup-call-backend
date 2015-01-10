@@ -1,13 +1,14 @@
 package config
 
 import (
+	"fmt"
 	"os"
-	//"regexp"
+	"regexp"
 )
 
 var (
-	Settings = getConfig()
-	//mongoUriFormat = "^mongodb\:\/\/(?P<username>[_\w]+):(?P<password>[\w]+)@(?P<host>[\.\w]+):(?P<port>\d+)/(?P<database>[_\w]+)$"
+	Settings       = getConfig()
+	mongoUriFormat = `^mongodb\:\/\/(?P<username>[_\w]+):(?P<password>[\w]+)@(?P<host>[\.\w]+):(?P<port>\d+)/(?P<database>[_\w]+)$`
 )
 
 type Config struct {
@@ -15,34 +16,29 @@ type Config struct {
 	Port         string
 	DatabaseUrl  string
 	DatabaseName string
-	DbUsername   string
-	DbPassword   string
 }
 
 // getConfig sets all relevant project settings
 func getConfig() *Config {
 	config := new(Config)
-
 	config.ProjectName = "Wakeup_Call"
 
-	port := os.Getenv("PORT")
-	if port == "" {
+	config.Port = ":" + os.Getenv("PORT")
+	if config.Port == ":" {
 		config.Port = ":8080"
-	} else {
-		config.Port = ":" + port
 	}
 
 	// Set up database connection url
-	databaseUrl := os.Getenv("MONGOLAB_URI")
-	if databaseUrl == "" {
+	config.DatabaseUrl = os.Getenv("MONGOLAB_URI")
+	if config.DatabaseUrl == "" {
 		config.DatabaseUrl = "localhost"
 		config.DatabaseName = "wakeup-call-dev"
 	} else {
-		config.DatabaseUrl = databaseUrl
-
 		// TODO: Grab databaseName from mongoURL using regex
 		//config.DatabaseName = "wakeup-call-prod"
-		// regex, _ := regexp.Compile(mongoUriFormat)
+		regex, _ := regexp.Compile(mongoUriFormat)
+		matches := regex.FindAllStringSubmatch(config.DatabaseUrl, -1)[0]
+		fmt.Printf("The matches are: %v\n", matches)
 		config.DatabaseName = "heroku_app33135020"
 	}
 
