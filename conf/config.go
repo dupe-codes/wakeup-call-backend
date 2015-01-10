@@ -34,12 +34,11 @@ func getConfig() *Config {
 		config.DatabaseUrl = "localhost"
 		config.DatabaseName = "wakeup-call-dev"
 	} else {
-		// TODO: Grab databaseName from mongoURL using regex
-		//config.DatabaseName = "wakeup-call-prod"
 		regex, _ := regexp.Compile(mongoUriFormat)
 		matches := regex.FindAllStringSubmatch(config.DatabaseUrl, -1)[0]
-		fmt.Printf("The matches are: %v\n", matches)
-		config.DatabaseName = "heroku_app33135020"
+		// Last regex match should be database name
+		config.DatabaseName = matches[len(matches)-1]
+		fmt.Printf("The database name is: %s", config.DatabaseName)
 	}
 
 	return config
