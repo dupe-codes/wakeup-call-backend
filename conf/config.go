@@ -2,12 +2,12 @@ package config
 
 import (
     "os"
-    "regexp"
+    //"regexp"
 )
 
 var (
 	Settings = getConfig()
-	mongoUriFormat = "^mongodb\:\/\/(?P<username>[_\w]+):(?P<password>[\w]+)@(?P<host>[\.\w]+):(?P<port>\d+)/(?P<database>[_\w]+)$"
+	//mongoUriFormat = "^mongodb\:\/\/(?P<username>[_\w]+):(?P<password>[\w]+)@(?P<host>[\.\w]+):(?P<port>\d+)/(?P<database>[_\w]+)$"
 )
 
 type Config struct {
