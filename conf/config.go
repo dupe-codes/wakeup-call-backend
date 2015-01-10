@@ -2,10 +2,12 @@ package config
 
 import (
     "os"
+    "regexp"
 )
 
 var (
 	Settings = getConfig()
+	mongoUriFormat = "^mongodb\:\/\/(?P<username>[_\w]+):(?P<password>[\w]+)@(?P<host>[\.\w]+):(?P<port>\d+)/(?P<database>[_\w]+)$"
 )
 
 type Config struct {
@@ -13,6 +15,8 @@ type Config struct {
 	Port         string
 	DatabaseUrl  string
 	DatabaseName string
+	DbUsername   string
+	DbPassword   string
 }
 
 // getConfig sets all relevant project settings
@@ -35,8 +39,13 @@ func getConfig() *Config {
         config.DatabaseName = "wakeup-call-dev"
 	} else {
 	    config.DatabaseUrl = databaseUrl
-	    config.DatabaseName = "wakeup-call-prod"
+	    //config.DatabaseName = "wakeup-call-prod"
+	    config.DatabaseName = "heroku_app33135020"
 	}
+	
+	// TODO: Generate this programatically
+	// Credentials for heroku mongodb server
+	// regex, _ := regexp.Compile(mongoUriFormat)
 
 	return config
 }
