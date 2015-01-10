@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"regexp"
 )
@@ -38,7 +37,6 @@ func getConfig() *Config {
 		matches := regex.FindAllStringSubmatch(config.DatabaseUrl, -1)[0]
 		// Last regex match should be database name
 		config.DatabaseName = matches[len(matches)-1]
-		fmt.Printf("The database name is: %s", config.DatabaseName)
 	}
 
 	return config
