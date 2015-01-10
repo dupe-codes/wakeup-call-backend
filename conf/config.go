@@ -1,8 +1,8 @@
 package config
 
 import (
-    "os"
-    //"regexp"
+	"os"
+	//"regexp"
 )
 
 var (
@@ -25,27 +25,26 @@ func getConfig() *Config {
 
 	config.ProjectName = "Wakeup_Call"
 
-    port := os.Getenv("PORT")
-    if port == "" {
-        config.Port = ":8080"
-    } else {
-        config.Port = ":" + port
-    }
-
-    // Set up database connection url
-    databaseUrl := os.Getenv("MONGOLAB_URI")
-    if databaseUrl == "" {
-	    config.DatabaseUrl = "localhost"
-        config.DatabaseName = "wakeup-call-dev"
+	port := os.Getenv("PORT")
+	if port == "" {
+		config.Port = ":8080"
 	} else {
-	    config.DatabaseUrl = databaseUrl
-	    //config.DatabaseName = "wakeup-call-prod"
-	    config.DatabaseName = "heroku_app33135020"
+		config.Port = ":" + port
 	}
-	
-	// TODO: Generate this programatically
-	// Credentials for heroku mongodb server
-	// regex, _ := regexp.Compile(mongoUriFormat)
+
+	// Set up database connection url
+	databaseUrl := os.Getenv("MONGOLAB_URI")
+	if databaseUrl == "" {
+		config.DatabaseUrl = "localhost"
+		config.DatabaseName = "wakeup-call-dev"
+	} else {
+		config.DatabaseUrl = databaseUrl
+
+		// TODO: Grab databaseName from mongoURL using regex
+		//config.DatabaseName = "wakeup-call-prod"
+		// regex, _ := regexp.Compile(mongoUriFormat)
+		config.DatabaseName = "heroku_app33135020"
+	}
 
 	return config
 }

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
