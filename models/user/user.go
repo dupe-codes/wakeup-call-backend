@@ -126,6 +126,19 @@ func FindMatchingUser(username string) (*User, error) {
 	return &result, nil
 }
 
+// FindUserWithNumber searches for a saved user with the given phone number
+func FindUserWithNumber(phoneNumber string) (*User, error) {
+	result := User{}
+	searchQuery := func(col *mgo.Collection) error {
+        return col.Find(bson.M{"phoneNumber": phoneNumber}).One(&result)
+	}
+	err := db.ExecWithCol(CollectionName, searchQuery)
+	if err != nil {
+        return nil, err
+	}
+	return &result, nil
+}
+
 /*
  * User model utility functions
  */

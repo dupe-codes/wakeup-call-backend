@@ -23,7 +23,7 @@ func AllUsers(sessionStore *sessions.CookieStore) http.Handler {
 }
 
 // GetUser returns information for a currently signed in user
-func GetUser(sessionStore *sessions.CookieStore) http.Handler {
+func GetUserInfo(sessionStore *sessions.CookieStore) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		// First ensure that a user is logged in
 		session, _ := sessionStore.Get(req, "wakeup-session")
@@ -196,12 +196,36 @@ func GetUserGroups(sessionStore *sessions.CookieStore) http.Handler {
 	})
 }
 
+func GetUser(sessionStore *sessions.CookieStore) http.Handler {
+    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        queryValues := req.URL.Query()
+        if len(queryValues["phoneNumber"]) == 0 {
+            errorMsg := &errorUtils.GeneralError{Message: "A phone number must be included to query for a user"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+            return
+        }
+
+        phoneNumber := queryValues["phoneNumber"][0]
+        user, err := user.FindUserWithNumber(phoneNumber)
+        // TODO: Improve this to detect the type of error. Will probably have to
+        // expand functionality of FindUserWithNumber
+        if err != nil {
+            errorMsg := &errorUtils.GeneralError{Message: "Unable to find user with the given phone number"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+            return
+        }
+        APIResponses.SendSuccessResponse(user, res)
+        return
+    })
+}
+
 // ConfigRoutes initializes all application routes specific to users
 func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/users", CreateUser(sessionStore)).Methods("POST")
+	router.Handle("/users", GetUser(sessionStore)).Methods("GET")
 	router.Handle("/users/login", Login(sessionStore)).Methods("POST")
 	router.Handle("/users/logout", Logout(sessionStore)).Methods("POST")
-	router.Handle("/users/info", GetUser(sessionStore)).Methods("GET")
+	router.Handle("/users/info", GetUserInfo(sessionStore)).Methods("GET")
 	router.Handle("/users/{username}/groups", GetUserGroups(sessionStore)).Methods("GET")
 
 	router.Handle("/users/sessioncheck", CheckSession(sessionStore)).Methods("GET")
