@@ -108,6 +108,18 @@ func FindMatchingGroup(groupName string) (*Group, error) {
 	return &result, nil
 }
 
+func FindGroupWithNumber(phoneNumber string) (*Group, error) {
+    result := Group{}
+    searchQuery := func(col *mgo.Collection) error {
+        return col.Find(bson.M{"phoneNumber": phoneNumber}).One(&result)
+    }
+    err := db.ExecWithCol(CollectionName, searchQuery)
+    if err != nil {
+        return nil, err
+    }
+    return &result, nil
+}
+
 func GetGroupsForUser(user *user.User) ([]Group, error) {
 	userGroups := []Group{}
 	searchQuery := func(col *mgo.Collection) error {

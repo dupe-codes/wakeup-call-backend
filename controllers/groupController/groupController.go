@@ -76,7 +76,7 @@ func GetGroupUsers(sessionStore *sessions.CookieStore) http.Handler {
 	})
 }
 
-func GetGroup(sessionStore *sessions.CookieStore) http.Handler {
+func GetGroupInfo(sessionStore *sessions.CookieStore) http.Handler {
 	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		groupName := vars["groupName"]
@@ -92,8 +92,32 @@ func GetGroup(sessionStore *sessions.CookieStore) http.Handler {
 	})
 }
 
+func GetGroup(sessionStore *sessions.CookieStore) http.Handler {
+    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        queryValues := req.URL.Query()
+        if len(queryValues["phoneNumber"]) == 0 {
+            errorMsg := &errorUtils.GeneralError{Message: "A phone number must be included to query for a group"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+            return
+        }
+
+        phoneNumber := queryValues["phoneNumber"][0]
+        fmt.Println("Received query for group with phone number: " + phoneNumber)
+        group, err := group.FindGroupWithNumber(phoneNumber)
+        // TODO: Improve this error handling
+        if err != nil {
+            errorMsg := &errorUtils.GeneralError{Message: "Unable to find group with the given phone number"}
+            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+            return
+        }
+        APIResponses.SendSuccessResponse(group, res)
+        return
+    })
+}
+
 func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/groups", CreateGroup(sessionStore)).Methods("POST")
+	router.Handle("/groups", GetGroup(sessionStore)).Methods("GET")
 	router.Handle("/groups/{groupName}/users", GetGroupUsers(sessionStore)).Methods("GET")
-	router.Handle("/groups/{groupName}", GetGroup(sessionStore)).Methods("GET")
+	router.Handle("/groups/{groupName}", GetGroupInfo(sessionStore)).Methods("GET")
 }
