@@ -206,6 +206,7 @@ func GetUser(sessionStore *sessions.CookieStore) http.Handler {
         }
 
         phoneNumber := queryValues["phoneNumber"][0]
+        fmt.Printf("Received query for user with phone number: %s", phoneNumber)
         user, err := user.FindUserWithNumber(phoneNumber)
         // TODO: Improve this to detect the type of error. Will probably have to
         // expand functionality of FindUserWithNumber
