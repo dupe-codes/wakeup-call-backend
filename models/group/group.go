@@ -48,12 +48,21 @@ func (group *Group) Save() error {
 // ProvisionPhoneNumber assigns a Twilio phone number for the group
 // TODO: For now, returns trial number. Replace with creating # programatically
 func (group *Group) ProvisionPhoneNumber() error {
-	addNumberQuery := func(col *mgo.Collection) error {
-		groupSelector := bson.M{"groupName": group.Name}
-		update := bson.M{"$set": bson.M{"phoneNumber": "18705251963"}}
-		return col.Update(groupSelector, update)
+	newNumber := "+18705251963"
+	group.Phonenumber = newNumber
+
+	// Check if the new number has already been used, in which case raise an error
+	numberCheckQuery := func(col *mgo.Collection) error {
+		count, err := col.Find(bson.M{"phoneNumber": newNumber}).Limit(1).Count()
+		if err != nil {
+			return err
+		}
+		if count != 0 {
+			return &errorUtils.GeneralError{Message: "Error creating group phone number: number already exists"}
+		}
+		return nil
 	}
-	err := db.ExecWithCol(CollectionName, addNumberQuery)
+	err := db.ExecWithCol(CollectionName, numberCheckQuery)
 	return err
 }
 
@@ -109,15 +118,15 @@ func FindMatchingGroup(groupName string) (*Group, error) {
 }
 
 func FindGroupWithNumber(phoneNumber string) (*Group, error) {
-    result := Group{}
-    searchQuery := func(col *mgo.Collection) error {
-        return col.Find(bson.M{"phoneNumber": phoneNumber}).One(&result)
-    }
-    err := db.ExecWithCol(CollectionName, searchQuery)
-    if err != nil {
-        return nil, err
-    }
-    return &result, nil
+	result := Group{}
+	searchQuery := func(col *mgo.Collection) error {
+		return col.Find(bson.M{"phoneNumber": phoneNumber}).One(&result)
+	}
+	err := db.ExecWithCol(CollectionName, searchQuery)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 func GetGroupsForUser(user *user.User) ([]Group, error) {

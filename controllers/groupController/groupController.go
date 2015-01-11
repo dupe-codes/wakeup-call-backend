@@ -23,20 +23,17 @@ func CreateGroup(sessionStore *sessions.CookieStore) http.Handler {
 			return
 		}
 
-		// Create and save the new group
 		req.ParseForm()
 		newGroup := &group.Group{Name: req.FormValue("Name")}
-		err := newGroup.Save()
+		err := newGroup.ProvisionPhoneNumber()
 		if err != nil {
-			APIResponses.SendErrorResponse(err, http.StatusBadRequest, res)
+			APIResponses.SendErrorResponse(err, http.StatusInternalServerError, res)
 			return
 		}
 
-		// After group created, provision its phone number
-		err = newGroup.ProvisionPhoneNumber()
+		err = newGroup.Save()
 		if err != nil {
-			errorMsg := &errorUtils.GeneralError{"Error provisioning group phone number"}
-			APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+			APIResponses.SendErrorResponse(err, http.StatusBadRequest, res)
 			return
 		}
 
@@ -93,26 +90,26 @@ func GetGroupInfo(sessionStore *sessions.CookieStore) http.Handler {
 }
 
 func GetGroup(sessionStore *sessions.CookieStore) http.Handler {
-    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-        queryValues := req.URL.Query()
-        if len(queryValues["phoneNumber"]) == 0 {
-            errorMsg := &errorUtils.GeneralError{Message: "A phone number must be included to query for a group"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
-            return
-        }
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		queryValues := req.URL.Query()
+		if len(queryValues["phoneNumber"]) == 0 {
+			errorMsg := &errorUtils.GeneralError{Message: "A phone number must be included to query for a group"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
 
-        phoneNumber := queryValues["phoneNumber"][0]
-        fmt.Println("Received query for group with phone number: " + phoneNumber)
-        group, err := group.FindGroupWithNumber(phoneNumber)
-        // TODO: Improve this error handling
-        if err != nil {
-            errorMsg := &errorUtils.GeneralError{Message: "Unable to find group with the given phone number"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
-            return
-        }
-        APIResponses.SendSuccessResponse(group, res)
-        return
-    })
+		phoneNumber := queryValues["phoneNumber"][0]
+		fmt.Println("Received query for group with phone number: " + phoneNumber)
+		group, err := group.FindGroupWithNumber(phoneNumber)
+		// TODO: Improve this error handling
+		if err != nil {
+			errorMsg := &errorUtils.GeneralError{Message: "Unable to find group with the given phone number"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+			return
+		}
+		APIResponses.SendSuccessResponse(group, res)
+		return
+	})
 }
 
 func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {

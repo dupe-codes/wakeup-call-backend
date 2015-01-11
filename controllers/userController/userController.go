@@ -197,27 +197,27 @@ func GetUserGroups(sessionStore *sessions.CookieStore) http.Handler {
 }
 
 func GetUser(sessionStore *sessions.CookieStore) http.Handler {
-    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-        queryValues := req.URL.Query()
-        if len(queryValues["phoneNumber"]) == 0 {
-            errorMsg := &errorUtils.GeneralError{Message: "A phone number must be included to query for a user"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
-            return
-        }
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		queryValues := req.URL.Query()
+		if len(queryValues["phoneNumber"]) == 0 {
+			errorMsg := &errorUtils.GeneralError{Message: "A phone number must be included to query for a user"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
 
-        phoneNumber := queryValues["phoneNumber"][0]
-        fmt.Println("Received query for user with phone number: " + phoneNumber)
-        user, err := user.FindUserWithNumber(phoneNumber)
-        // TODO: Improve this to detect the type of error. Will probably have to
-        // expand functionality of FindUserWithNumber
-        if err != nil {
-            errorMsg := &errorUtils.GeneralError{Message: "Unable to find user with the given phone number"}
-            APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
-            return
-        }
-        APIResponses.SendSuccessResponse(user, res)
-        return
-    })
+		phoneNumber := queryValues["phoneNumber"][0]
+		fmt.Println("Received query for user with phone number: " + phoneNumber)
+		user, err := user.FindUserWithNumber(phoneNumber)
+		// TODO: Improve this to detect the type of error. Will probably have to
+		// expand functionality of FindUserWithNumber
+		if err != nil {
+			errorMsg := &errorUtils.GeneralError{Message: "Unable to find user with the given phone number"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusInternalServerError, res)
+			return
+		}
+		APIResponses.SendSuccessResponse(user, res)
+		return
+	})
 }
 
 // ConfigRoutes initializes all application routes specific to users

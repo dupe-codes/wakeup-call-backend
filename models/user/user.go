@@ -130,11 +130,11 @@ func FindMatchingUser(username string) (*User, error) {
 func FindUserWithNumber(phoneNumber string) (*User, error) {
 	result := User{}
 	searchQuery := func(col *mgo.Collection) error {
-        return col.Find(bson.M{"phoneNumber": phoneNumber}).One(&result)
+		return col.Find(bson.M{"phoneNumber": phoneNumber}).One(&result)
 	}
 	err := db.ExecWithCol(CollectionName, searchQuery)
 	if err != nil {
-        return nil, err
+		return nil, err
 	}
 	return &result, nil
 }
