@@ -9,6 +9,7 @@ import (
 
 	"github.com/njdup/wakeup-call-backend/models/group"
 	"github.com/njdup/wakeup-call-backend/models/user"
+	"github.com/njdup/wakeup-call-backend/models/invites"
 	"github.com/njdup/wakeup-call-backend/utils/errors"
 	"github.com/njdup/wakeup-call-backend/utils/responses"
 )
@@ -112,9 +113,43 @@ func GetGroup(sessionStore *sessions.CookieStore) http.Handler {
 	})
 }
 
+func CreateGroupInvite(sessionStore *sessions.CookieStore) http.Handler {
+    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+        // First ensure that a user is logged in
+		session, _ := sessionStore.Get(req, "wakeup-session")
+		if _, ok := session.Values["user"]; !ok {
+			errorMsg := &errorUtils.GeneralError{Message: "You must be signed in to invite a user to join a group"}
+			APIResponses.SendErrorResponse(errorMsg, http.StatusBadRequest, res)
+			return
+		}
+
+        req.ParseForm()
+        vars := mux.Vars(req)
+        groupName := vars["groupName"]
+
+        // TODO: Add more robust validations, such as checking given phone number
+        invite := &invites.Invite{
+            Name: req.FormValue("Name"),
+            Groupname: groupName,
+            Phonenumber: req.FormValue("Phonenumber"),
+        }
+
+        // TODO: Add more robust error handling
+        err := invite.Save()
+        if err != nil {
+            APIResponses.SendErrorResponse(err, http.StatusBadRequest, res)
+            return
+        }
+
+        APIResponses.SendSuccessResponse("Invite successfully created", res)
+        return
+    })
+}
+
 func ConfigRoutes(router *mux.Router, sessionStore *sessions.CookieStore) {
 	router.Handle("/groups", CreateGroup(sessionStore)).Methods("POST")
 	router.Handle("/groups", GetGroup(sessionStore)).Methods("GET")
 	router.Handle("/groups/{groupName}/users", GetGroupUsers(sessionStore)).Methods("GET")
 	router.Handle("/groups/{groupName}", GetGroupInfo(sessionStore)).Methods("GET")
+	router.Handle("/groups/{groupName}/invite", CreateGroupInvite(sessionStore)).Methods("POST")
 }
